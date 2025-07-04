@@ -1,0 +1,32 @@
+<!-- index.html（スマホ用タイマー） -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>スマホタイマー</title>
+</head>
+<body>
+  <h1 id="timer">00:00.0</h1>
+  <button onclick="startTimer()">スタート</button>
+  <script>
+    let startTime, interval;
+    function startTimer() {
+      startTime = Date.now();
+      interval = setInterval(() => {
+        const now = Date.now() - startTime;
+        const sec = Math.floor(now / 1000);
+        const ms = Math.floor((now % 1000) / 100);
+        document.getElementById("timer").innerText = `${String(sec).padStart(2, '0')}:${ms}0`;
+      }, 100);
+    }
+    function stopTimer() {
+      clearInterval(interval);
+    }
+
+    // ラズパイからWebSocketで受信（IPはラズパイのIPに）
+    const socket = new WebSocket("ws://192.168.4.1:8765");
+    socket.onmessage = (e) => {
+      if (e.data === "touch") stopTimer();
+    };
+  </script>
+</body>
+</html>
